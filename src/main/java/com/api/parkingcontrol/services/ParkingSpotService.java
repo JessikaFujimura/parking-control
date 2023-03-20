@@ -3,10 +3,15 @@ package com.api.parkingcontrol.services;
 import com.api.parkingcontrol.dto.ParkingSpotDto;
 import com.api.parkingcontrol.models.ParkingSpotEntity;
 import com.api.parkingcontrol.repositories.ParkingSpotRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class ParkingSpotService {
@@ -35,7 +40,16 @@ public class ParkingSpotService {
         return parkingSpotRepository.existsByApartmentAndBlock(apartment, block);
     }
 
-    public List<ParkingSpotEntity> findAll() {
-        return parkingSpotRepository.findAll();
+    public Page<ParkingSpotEntity> findAll(Pageable pageable) {
+        return parkingSpotRepository.findAll(pageable);
+    }
+
+    public Optional<ParkingSpotEntity> findById(UUID id) {
+        return parkingSpotRepository.findById(id);
+    }
+
+    @Transactional
+    public void delete(ParkingSpotEntity parkingSpotEntity) {
+        parkingSpotRepository.delete(parkingSpotEntity);
     }
 }

@@ -8,7 +8,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.rules.ExpectedException;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -32,8 +34,6 @@ public class ParkingSpotControllerTest {
 
     @Mock
     private ParkingSpotService parkingSpotService;
-
-    ObjectMapper objectMapper = new ObjectMapper();
 
     @Before
     public void init(){
@@ -61,4 +61,14 @@ public class ParkingSpotControllerTest {
         Assert.assertEquals(res.getStatusCode(), HttpStatus.OK);
         Assert.assertNotNull(res.getBody());
     }
+
+    @Test
+    public void testGetOneParkingSpotWhenNotFound(){
+        UUID id = UUID.randomUUID();
+        Mockito.when(parkingSpotService.findById(any(UUID.class))).thenReturn(Optional.empty());
+        ResponseEntity<Object> res = parkingSpotController.getOneParkingSpot(id);
+        Assert.assertEquals(res.getStatusCode(), HttpStatus.NOT_FOUND);
+        Assert.assertEquals(res.getBody(), "Parking Spot not found");
+    }
+
 }

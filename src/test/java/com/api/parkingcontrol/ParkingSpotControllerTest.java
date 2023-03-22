@@ -1,23 +1,15 @@
 package com.api.parkingcontrol;
 
 import com.api.parkingcontrol.controllers.ParkingSpotController;
-import com.api.parkingcontrol.dto.ParkingSpotDto;
 import com.api.parkingcontrol.models.ParkingSpotEntity;
 import com.api.parkingcontrol.services.ParkingSpotService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.rules.ExpectedException;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -70,5 +62,7 @@ public class ParkingSpotControllerTest {
         Assert.assertEquals(res.getStatusCode(), HttpStatus.NOT_FOUND);
         Assert.assertEquals(res.getBody(), "Parking Spot not found");
     }
+
+
 
 }

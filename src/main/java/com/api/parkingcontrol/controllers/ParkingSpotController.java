@@ -1,12 +1,12 @@
 package com.api.parkingcontrol.controllers;
 
+import com.api.parkingcontrol.Exception.BusinessException;
 import com.api.parkingcontrol.dto.ParkingSpotDto;
 import com.api.parkingcontrol.models.ParkingSpotEntity;
 import com.api.parkingcontrol.services.ParkingSpotService;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -33,13 +34,16 @@ public class ParkingSpotController {
 
 
     @PostMapping
-    public ResponseEntity<Object> createParkingSpot(@RequestBody @Valid ParkingSpotDto parkingSpotDto) {
+    public ResponseEntity<Object> createParkingSpot(@RequestBody @Valid ParkingSpotDto parkingSpotDto) throws BusinessException {
         if (parkingSpotService.existsByLicensePlateCar(parkingSpotDto.getLicensePlateCar()))
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflict: License Plate Car is already in use!");
+            throw new BusinessException("Conflict: License Plate Car is already in use!", Map.of("key", List.of("value1", "value2")));
+//            return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflict: License Plate Car is already in use!");
         if (parkingSpotService.existsByParkingSpotNumber(parkingSpotDto.getParkingSpotNumber()))
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflict: Parking Spot is already in use!");
+            throw new BusinessException("Conflict: Parking Spot is already in use!", Map.of("key", List.of("value1", "value2")));
+//        return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflict: Parking Spot is already in use!");
         if (parkingSpotService.existsByApartmentAndBlock(parkingSpotDto.getApartment(), parkingSpotDto.getBlock()))
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflict: Parking Spot already registered for this apartment/block!");
+            throw new BusinessException("Conflict: Parking Spot already registered for this apartment/block!", Map.of("key", List.of("value1", "value2")));
+//        return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflict: Parking Spot already registered for this apartment/block!");
         var parkingSpotModel = new ParkingSpotEntity();
         BeanUtils.copyProperties(parkingSpotDto, parkingSpotModel);
         parkingSpotModel.setRegistrationDate(LocalDateTime.now(ZoneId.of("UTC")));

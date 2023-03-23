@@ -11,15 +11,15 @@ import java.util.List;
 import java.util.Map;
 
 @Logging(level = Level.ERROR)
-@ResponseStatus(code = HttpStatus.CONFLICT)
-public class BusinessException extends RuntimeException implements MultipleErrorMessage {
+@ResponseStatus(code = HttpStatus.NOT_FOUND)
+public class NotFoundException extends RuntimeException implements MultipleErrorMessage {
 
     @Serial
     private static final long serialVersionUID = 6964670367101916282L;
 
     private final Map<String, List<String>> errorMessage;
 
-    public BusinessException( Map<String, List<String>> err) {
+    public NotFoundException(Map<String, List<String>> err) {
         this.errorMessage = Map.copyOf(err);
     }
 

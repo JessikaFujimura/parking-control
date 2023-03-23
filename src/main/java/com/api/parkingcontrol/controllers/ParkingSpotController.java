@@ -1,6 +1,7 @@
 package com.api.parkingcontrol.controllers;
 
 import com.api.parkingcontrol.Exception.BusinessException;
+import com.api.parkingcontrol.Exception.NotFoundException;
 import com.api.parkingcontrol.dto.ParkingSpotDto;
 import com.api.parkingcontrol.models.ParkingSpotEntity;
 import com.api.parkingcontrol.services.ParkingSpotService;
@@ -36,14 +37,11 @@ public class ParkingSpotController {
     @PostMapping
     public ResponseEntity<Object> createParkingSpot(@RequestBody @Valid ParkingSpotDto parkingSpotDto) throws BusinessException {
         if (parkingSpotService.existsByLicensePlateCar(parkingSpotDto.getLicensePlateCar()))
-            throw new BusinessException("Conflict: License Plate Car is already in use!", Map.of("key", List.of("Conflict: License Plate Car is already in use!", "value2")));
-//            return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflict: License Plate Car is already in use!");
+            throw new BusinessException(Map.of("Conflict", List.of("License Plate Car is already in use!", HttpStatus.CONFLICT.toString())));
         if (parkingSpotService.existsByParkingSpotNumber(parkingSpotDto.getParkingSpotNumber()))
-            throw new BusinessException("Conflict: Parking Spot is already in use!", Map.of("key", List.of("value1", "value2")));
-//        return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflict: Parking Spot is already in use!");
+            throw new BusinessException(Map.of("Conflict", List.of("Parking Spot is already in use!", HttpStatus.CONFLICT.toString())));
         if (parkingSpotService.existsByApartmentAndBlock(parkingSpotDto.getApartment(), parkingSpotDto.getBlock()))
-            throw new BusinessException("Conflict: Parking Spot already registered for this apartment/block!", Map.of("key", List.of("value1", "value2")));
-//        return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflict: Parking Spot already registered for this apartment/block!");
+            throw new BusinessException(Map.of("Conflict", List.of("Parking Spot already registered for this apartment/block!", HttpStatus.CONFLICT.toString())));
         var parkingSpotModel = new ParkingSpotEntity();
         BeanUtils.copyProperties(parkingSpotDto, parkingSpotModel);
         parkingSpotModel.setRegistrationDate(LocalDateTime.now(ZoneId.of("UTC")));
@@ -62,7 +60,7 @@ public class ParkingSpotController {
     public ResponseEntity<Object> getOneParkingSpot(@PathVariable(value = "id") UUID id){
         Optional<ParkingSpotEntity> parkingSpotEntityOptional = parkingSpotService.findById(id);
         if(parkingSpotEntityOptional.isEmpty())
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Parking Spot not found");
+            throw new NotFoundException(Map.of("Attention", List.of("Parking Spot not found", HttpStatus.NOT_FOUND.toString())));
         return ResponseEntity.status(HttpStatus.OK).body(parkingSpotEntityOptional.get());
     }
 
@@ -70,7 +68,8 @@ public class ParkingSpotController {
     public ResponseEntity<Object> deleteParkingSpot(@PathVariable(value = "id") UUID id){
         Optional<ParkingSpotEntity> parkingSpotEntityOptional = parkingSpotService.findById(id);
         if(parkingSpotEntityOptional.isEmpty())
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Parking Spot not found");
+            throw new NotFoundException(Map.of("Attention", List.of("Parking Spot not found", HttpStatus.NOT_FOUND.toString())));
+
         parkingSpotService.delete(parkingSpotEntityOptional.get());
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Parking Spot deleted successfully!");
     }
@@ -80,7 +79,7 @@ public class ParkingSpotController {
                                                     @RequestBody ParkingSpotDto parkingSpotDto) {
         Optional<ParkingSpotEntity> parkingSpotEntityOptional = parkingSpotService.findById(id);
         if(parkingSpotEntityOptional.isEmpty())
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Parking Spot not found");
+            throw new NotFoundException(Map.of("Attention", List.of("Parking Spot not found", HttpStatus.NOT_FOUND.toString())));
         var parkingSpotEntity = parkingSpotEntityOptional.get();
         BeanUtils.copyProperties(parkingSpotDto, parkingSpotEntity);
         return ResponseEntity.status(HttpStatus.OK).body(parkingSpotService.save(parkingSpotEntity));

@@ -1,11 +1,13 @@
 package com.api.parkingcontrol;
 
+import com.api.parkingcontrol.Exception.NotFoundException;
 import com.api.parkingcontrol.controllers.ParkingSpotController;
 import com.api.parkingcontrol.models.ParkingSpotEntity;
 import com.api.parkingcontrol.services.ParkingSpotService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -16,10 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -65,9 +64,11 @@ public class ParkingSpotControllerTest {
     public void testGetOneParkingSpotWhenNotFound(){
         UUID id = UUID.randomUUID();
         Mockito.when(parkingSpotService.findById(any(UUID.class))).thenReturn(Optional.empty());
-        ResponseEntity<Object> res = parkingSpotController.getOneParkingSpot(id);
-        Assert.assertEquals(res.getStatusCode(), HttpStatus.NOT_FOUND);
-        Assert.assertEquals(res.getBody(), "Parking Spot not found");
+
+        NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> {
+            parkingSpotController.getOneParkingSpot(id);
+        }, "Parking Spot not found" );
+        Assert.assertEquals(exception.getErrorMessages(), Map.of("Attention", List.of("Parking Spot not found", HttpStatus.NOT_FOUND.toString())));
     }
 
     @Test

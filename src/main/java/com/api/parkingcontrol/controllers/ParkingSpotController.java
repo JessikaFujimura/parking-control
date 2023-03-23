@@ -36,7 +36,7 @@ public class ParkingSpotController {
     @PostMapping
     public ResponseEntity<Object> createParkingSpot(@RequestBody @Valid ParkingSpotDto parkingSpotDto) throws BusinessException {
         if (parkingSpotService.existsByLicensePlateCar(parkingSpotDto.getLicensePlateCar()))
-            throw new BusinessException("Conflict: License Plate Car is already in use!", Map.of("key", List.of("value1", "value2")));
+            throw new BusinessException("Conflict: License Plate Car is already in use!", Map.of("key", List.of("Conflict: License Plate Car is already in use!", "value2")));
 //            return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflict: License Plate Car is already in use!");
         if (parkingSpotService.existsByParkingSpotNumber(parkingSpotDto.getParkingSpotNumber()))
             throw new BusinessException("Conflict: Parking Spot is already in use!", Map.of("key", List.of("value1", "value2")));

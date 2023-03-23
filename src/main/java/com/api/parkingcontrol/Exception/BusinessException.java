@@ -1,11 +1,17 @@
 package com.api.parkingcontrol.Exception;
 
+import com.api.parkingcontrol.configs.Logging;
+import com.api.parkingcontrol.configs.Logging.Level;
 import com.api.parkingcontrol.configs.MultipleErrorMessage;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.io.Serial;
 import java.util.List;
 import java.util.Map;
 
+@Logging(level = Level.ERROR)
+@ResponseStatus(code = HttpStatus.CONFLICT)
 public class BusinessException extends RuntimeException  implements MultipleErrorMessage {
 
     @Serial
